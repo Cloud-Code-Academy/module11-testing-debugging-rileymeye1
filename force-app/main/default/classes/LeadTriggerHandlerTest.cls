@@ -163,25 +163,28 @@ private class LeadTriggerHandlerTest {
                                                     WHERE IsConverted = TRUE]);
         System.assertEquals(0, convertedLeads.size(), 'Too many Leads were auto converted');
 
-        // Test.startTest();
-        // Contact contactToInsert = new Contact(FirstName='Riley', LastName='Meyer', Email='riley.meyer@orion.com');
-        // Database.insert(contactToInsert, AccessLevel.SYSTEM_MODE);
+        Test.startTest();
+        Account acc = new Account(Name='Test Account');
+        Database.insert(acc, AccessLevel.SYSTEM_MODE);
 
-        // List<Lead> leadsToUpdate = new List<Lead>([SELECT Id, Email, IsConverted
-        //                                                         FROM Lead
-        //                                                         WHERE Email = 'r.meyer@dev.com']);
-        // System.debug('BEFORE UDPATE::::: ' + leadsToUpdate);
-        // for (Lead ld : leadsToUpdate) {
-        //     ld.Email = 'riley.meyer@orion.com';
-        // }
-        // Database.update(leadsToUpdate, AccessLevel.SYSTEM_MODE);
-        // System.debug('AFTER UPDATE:::::: ' + leadsToUpdate);
-        // Test.stopTest();
+        Contact contactToInsert = new Contact(FirstName='Riley', LastName='Meyer', Email='riley.meyer@orion.com', AccountId=acc.Id);
+        Database.insert(contactToInsert, AccessLevel.SYSTEM_MODE);
 
-        // List<Lead> convertedLeadsTwo = new List<Lead>([SELECT Id, IsConverted
-        //                                             FROM Lead
-        //                                             WHERE IsConverted = TRUE]);
-        // System.assertEquals(1, convertedLeadsTwo.size(), 'Too many Leads were auto converted');
+        List<Lead> leadsToUpdate = new List<Lead>([SELECT Id, Email, IsConverted
+                                                                FROM Lead
+                                                                WHERE Email = 'r.meyer@dev.com']);
+        for (Lead ld : leadsToUpdate) {
+            ld.Email = 'riley.meyer@orion.com';
+        }
+        Database.update(leadsToUpdate, AccessLevel.SYSTEM_MODE);
+        Test.stopTest();
+
+        List<Lead> convertedLeadsTwo = new List<Lead>([SELECT Id, IsConverted, ConvertedAccountId, ConvertedContactId
+                                                    FROM Lead
+                                                    WHERE IsConverted = TRUE]);
+        System.assertEquals(1, convertedLeadsTwo.size(), 'Not the right number of Leads were auto converted');
+        System.assertEquals(acc.Id, convertedLeadsTwo[0].ConvertedAccountId, 'The Lead was not converted with the correct Account Id');
+        System.assertEquals(contactToInsert.Id, convertedLeadsTwo[0].ConvertedContactId, 'The Lead was not converted with the correct Contact Id');
     }
 
 }
