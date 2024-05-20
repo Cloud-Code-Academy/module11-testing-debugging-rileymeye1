@@ -10,8 +10,13 @@ private class LeadTriggerHandlerTest {
 
     @TestSetup
     static void makeData(){
-        List<Contact> contacts = new List<Contact>();
-        contacts.add(new Contact(FirstName='',LastName=''));
+        // List<Contact> contacts = new List<Contact>();
+        // contacts.add(new Contact(FirstName='David', LastName='Bolding', Email='d.bolding@metals.com'));
+        // contacts.add(new Contact(FirstName='Warren', LastName='Walters', Email='walterstest@CCA.com'));
+        // contacts.add(new Contact(FirstName='Chase', LastName='BigDawg', Email='c.brammer@rcks.com'));
+        // contacts.add(new Contact(FirstName='Riley', LastName='Meyer'));
+
+        // Database.insert(contacts, AccessLevel.SYSTEM_MODE);
 
         List<Lead> leads = new List<Lead>();
         leads.add(new Lead(FirstName = 'David', LastName = 'Bolding', Company = 'Bolding Metals', Title = 'vp', Industry='Manufacturing', LeadSource='Web', Email='d.bolding@metals.com'));
@@ -153,7 +158,30 @@ private class LeadTriggerHandlerTest {
 
     @IsTest
     static void testHandleLeadAutoConvert() {
+        List<Lead> convertedLeads = new List<Lead>([SELECT Id, IsConverted
+                                                    FROM Lead
+                                                    WHERE IsConverted = TRUE]);
+        System.assertEquals(0, convertedLeads.size(), 'Too many Leads were auto converted');
 
+        // Test.startTest();
+        // Contact contactToInsert = new Contact(FirstName='Riley', LastName='Meyer', Email='riley.meyer@orion.com');
+        // Database.insert(contactToInsert, AccessLevel.SYSTEM_MODE);
+
+        // List<Lead> leadsToUpdate = new List<Lead>([SELECT Id, Email, IsConverted
+        //                                                         FROM Lead
+        //                                                         WHERE Email = 'r.meyer@dev.com']);
+        // System.debug('BEFORE UDPATE::::: ' + leadsToUpdate);
+        // for (Lead ld : leadsToUpdate) {
+        //     ld.Email = 'riley.meyer@orion.com';
+        // }
+        // Database.update(leadsToUpdate, AccessLevel.SYSTEM_MODE);
+        // System.debug('AFTER UPDATE:::::: ' + leadsToUpdate);
+        // Test.stopTest();
+
+        // List<Lead> convertedLeadsTwo = new List<Lead>([SELECT Id, IsConverted
+        //                                             FROM Lead
+        //                                             WHERE IsConverted = TRUE]);
+        // System.assertEquals(1, convertedLeadsTwo.size(), 'Too many Leads were auto converted');
     }
 
 }
