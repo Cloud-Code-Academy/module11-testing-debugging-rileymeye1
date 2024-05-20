@@ -60,7 +60,7 @@ public with sharing class LeadTriggerHandler {
 			Integer score = 0;
 
 			// Check and add points based on the specified conditions
-			if (ld.LeadSource == 'Website' && ld.Email != null) {
+			if (ld.LeadSource == 'Web' && ld.Email != null) {
 				score += 3;
 			}
 
@@ -99,11 +99,11 @@ public with sharing class LeadTriggerHandler {
 	 * - One of the errors is recursion related. Check if the lead is already converted or check if the email has changed/is null
 	 * - One of the errors is map related. Make sure you are using the correct contact map key
 	 */
-	public static void handleLeadAutoConvert(List<Lead> leads, Map<Id, Lead> oldLeadsMap) {
+	public static void handleLeadAutoConvert(List<Lead> leads) {
 		// Step 1: Gather all lead emails
         Map<Id,String> leadToEmailMap = new Map<Id,String>();
 		for (Lead lead : leads) {
-			if (!lead.IsConverted && lead.Email != null && lead.Email != oldLeadsMap.get(lead.Id).Email) {
+			if (!lead.IsConverted && lead.Email != null) {
 				leadToEmailMap.put(lead.Id, lead.Email);
 			}
 		}

@@ -27,10 +27,10 @@ trigger LeadTrigger on Lead(before insert, after insert,
 			LeadTriggerHandler.handleAutoLeadScoring(Trigger.new);
 		}
 		when AFTER_INSERT {
-			LeadTriggerHandler.handleLeadAutoConvert(Trigger.new, Trigger.oldMap);
+			LeadTriggerHandler.handleLeadAutoConvert(Trigger.new);
 		}
 		when AFTER_UPDATE {
-			LeadTriggerHandler.handleLeadAutoConvert(Trigger.new, Trigger.oldMap);
+			LeadTriggerHandler.handleLeadAutoConvert(Trigger.new);
 		}
 	}
 }

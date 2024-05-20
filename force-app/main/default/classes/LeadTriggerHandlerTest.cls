@@ -75,4 +75,51 @@ private class LeadTriggerHandlerTest {
         }
     }
 
+    @IsTest
+    static void testHandleAutoLeadScoring() {
+        // Load Test Data
+        List<Lead> leads = new List<Lead>();
+        leads.add(new Lead(FirstName = 'David', LastName = 'Bolding', Company = 'Bolding Metals', Title = 'vp', Industry='Manufacturing', LeadSource='Web', Email='d.bolding@metals.com')); // Leadscore: 3
+        leads.add(new Lead(FirstName = 'Warren', LastName = 'Walters', Company = 'CCA', Title = 'v.p.', Industry='Technology', LeadSource='Web', Phone='123-456-7890')); // Leadscore: 15
+        leads.add(new Lead(FirstName = 'Chase', LastName = 'BigDawg', Company = 'BigDawg Rocks', Title = 'vice president', Industry='Construction', LeadSource='Purchased List', Email='c.bigdawg@rcks.com', Phone='456-654-9874')); // Leadscore: 5
+        leads.add(new Lead(FirstName = 'Brooks', LastName = 'Wizard', Company = 'Wizard School', Title = 'mgr', Industry='Education', LeadSource='Purchased List', Email='b.magic@potions.com')); // Leadscore: 0
+        leads.add(new Lead(FirstName = 'Oxana', LastName = 'Suvorova', Company = 'Suvorova Schools', Title = 'manage', Industry='Technology', LeadSource='Purchased List', Email='o.suvorova@schools.com')); // Leadscore:10
+        leads.add(new Lead(FirstName = 'John', LastName = 'George', Company = 'George Elite', Title = 'head of department', Industry='Apparel', LeadSource='Purchased List', Email='j.george@elite.com')); // Leadscore: 0
+        leads.add(new Lead(FirstName = 'Navid', LastName = 'Mudassir', Company = 'M.U.D.', Title = 'exec', Industry='Technology', LeadSource='Web', Email='n.mudassir@mud.com')); // Leadscore: 13
+        leads.add(new Lead(FirstName = 'Raghavendra', LastName = 'Yadavalli', Company = 'R.Y.', Title = 'chief', Industry='Utilities', LeadSource='Purchased List', Email='r.yadavalli@ry.com')); // Leadscore: 0 
+        leads.add(new Lead(FirstName = 'Tony', LastName = 'Kirumba', Company = 'Tony\'s Turtles', Title = 'head', Industry='Retail', LeadSource='Purchased List', Email='t.kirumba@turtlesrule.com')); // Leadscore: 0
+        leads.add(new Lead(FirstName = 'Ariel', LastName = 'T.', Company = 'Under the Sea', Title = 'assist', Industry='Hospitality', LeadSource='Web', Email='a.t@underwater.com', Phone='654-321-5823')); // Leadscore: 8
+        leads.add(new Lead(FirstName = 'Dallas', LastName = 'Bailey', Company = 'Bailey Tea', Title = 'deputy', Industry='Retail', LeadSource='Phone Inquiry', Email='d.bailey@teatime.com')); // Leadscore: 0
+        leads.add(new Lead(FirstName = 'Tyler', LastName = 'Riden', Company = 'Rock n Riden', Title = 'jr', Industry='Construction', LeadSource='Partner Referral', Email='t.riden@rock4life.com')); // Leadscore: 0
+        leads.add(new Lead(FirstName = 'Riley', LastName = 'Meyer', Company = 'Developer Futures', Title = 'developer', Industry='Technology', LeadSource='Web', Email='r.meyer@dev.com', Phone='987-654-3210')); // Leadscore: 18
+
+        // Run Test
+        Test.startTest();
+        Database.insert(leads, AccessLevel.SYSTEM_MODE);
+        Test.stopTest();
+
+        // Check Results
+        List<Lead> scoreUpdates = new List<Lead>([SELECT Id, FirstName, LastName, Lead_Score__c, LeadSource, Email, Phone, Industry
+                                                    FROM Lead
+                                                    ORDER BY Lead_Score__c DESC]);
+        for (Lead ld : scoreUpdates) {
+            if (ld.Industry=='Technology' && ld.Phone != null && ld.LeadSource == 'Web' && ld.Email != null) {
+                System.assertEquals(18, ld.Lead_Score__c, 'Lead Score should have been 18');
+            } else if(ld.Industry=='Technology' && ld.Phone != null) {
+                System.assertEquals(15, ld.Lead_Score__c, 'Lead Score should have been 15');
+            } else if(ld.Industry=='Technology' && ld.LeadSource == 'Web' && ld.Email != null) {
+                System.assertEquals(13, ld.Lead_Score__c, 'Lead Score should have been 13');
+            } else if (ld.Industry=='Technology') {
+                System.assertEquals(10, ld.Lead_Score__c, 'Lead Score should have been 10');
+            } else if (ld.Phone != null && ld.LeadSource == 'Web' && ld.Email != null) {
+                System.assertEquals(8, ld.Lead_Score__c, 'Lead Score should have been 8');
+            } else if (ld.Phone != null) {
+                System.assertEquals(5, ld.Lead_Score__c, 'Lead Score should have been 5');
+            } else if (ld.LeadSource == 'Web' && ld.Email != null) {
+                System.assertEquals(3, ld.Lead_Score__c, 'Lead Score should have been 3');
+            } else {
+                System.assertEquals(0, ld.Lead_Score__c, 'Lead Score should have been 0');
+            }
+        }
+    }
 }
